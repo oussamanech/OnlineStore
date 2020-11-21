@@ -87,14 +87,14 @@
                         <input type="hidden" name="idd" value="<%=c1.getCatId()%>" >
 
                             <th scope="row"><%=c1.getCatId()%></th>
+                            
                             <td><div class="form-group">
                                 <input name="namee" value="<%=c1.getCatTitle()%>" type="text" required>
-                             </div>
-                             </td>
-                            <td><div class="form-group">
+                             </div>  </td>
+                            
+                             <td><div class="form-group">
                                 <input name="catdesc" value="<%=c1.getCatDesc()%>" type="text" required>
-                             </div>
-                             </td>
+                             </div> </td>
                             
                             <td><button class="btn btn-primary" >Update </button></td>
                             </form>
