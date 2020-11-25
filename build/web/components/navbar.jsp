@@ -1,12 +1,16 @@
 
-   <%@page import="com.entites.User"%>
+   <%@page import="com.entites.Category"%>
+<%@page import="java.util.List"%>
+<%@page import="com.dao.CategoryDao"%>
+<%@page import="com.entites.User"%>
 <%
        String usertype = (String) session.getAttribute("current-user");
        String userNowName = (String) session.getAttribute("current-username");
     
       User u= (User) session.getAttribute("currentUser");
 
-    
+            CategoryDao categoryDao1=new CategoryDao();
+            List<Category> listcategorys1=categoryDao1.getAllCategory();
     %>
  <header>
             <div class="container">
@@ -61,13 +65,13 @@
                       <!-- Category -->
                       <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              OUR SERVICE
+                              CAREGORYS
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                              <a class="dropdown-item" href="#">Action</a>
-                              <a class="dropdown-item" href="#">Another action</a>
-                              <div class="dropdown-divider"></div>
-                              <a class="dropdown-item" href="#">Something else here</a>
+                                <% for(Category c:listcategorys1){ %>  
+                                   <a href="index.jsp?category=<%=c.getCatId()%>" class="dropdown-item"><%=c.getCatTitle()%> </a>
+                                <%  }  %>
+
                             </div>
                       </li>
                       <!-- /Category -->
@@ -76,7 +80,7 @@
                         <a class="nav-link" href="#">PRIVACY</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="#">ABOUT US</a>
+                        <a class="nav-link" href="about.jsp">ABOUT US</a>
                       </li>
                       <li class="nav-item">
                      <a class="nav-link " href="#" ">CONTACT</a>
@@ -90,6 +94,9 @@
                             <i class="fa fa-cart-plus" style="font-size: 20px;"></i> <span class="ml-0 cart-items">( 1 )</span> 
                         </a>
                     </li>
+                    
+                    <% if(!(usertype==null)){  %> 
+                    
                     <li class="nav-item">
                      <a class="nav-link" href="<%=u.getUserType().equals("admin")?"admin.jsp":"normal.jsp"%>">DASHBORD</a>
                    </li>
@@ -97,7 +104,11 @@
                      <a class="nav-link" href="checkout.jsp">CHEKOUT</a>
                    </li>
                    
-
+                   <%   }else{       %>
+                   <li class="nav-item">
+                     <a class="nav-link" href="checkout.jsp">CHEKOUT</a>
+                   </li>
+                   <% } %>
                       
                   </div>
                 </nav>

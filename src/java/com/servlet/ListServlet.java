@@ -13,92 +13,91 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class ListServlet extends HttpServlet {
- 
-        Connection connection = null; 
-        Statement statement = null; 
-        ResultSet resultSet = null; 
- 
-        private String url = "jdbc:mysql://localhost/store"; 
-        private String user = "root"; 
-        private String password = ""; 
-  
+
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet resultSet = null;
+
+    private String url = "jdbc:mysql://localhost/store";
+    private String user = "root";
+    private String password = "";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
                       throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-                 HttpSession httpSession = request.getSession();
+            HttpSession httpSession = request.getSession();
             try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance(); 
-                 connection = DriverManager.getConnection(url, user, password);      
-                 statement = connection.createStatement();
-                 
+                Class.forName("com.mysql.jdbc.Driver").newInstance();
+                connection = DriverManager.getConnection(url, user, password);
+                statement = connection.createStatement();
+
                 //get id name :
                 String idd = request.getParameter("idd");
                 String namee = request.getParameter("namee");
-                 
-                 //Get Parameter operation
+
+                //Get Parameter operation
                 String operation = request.getParameter("operation");
-               // remove_user
-                if(operation.equalsIgnoreCase("remove_user")){
-                    String rmvuser= "DELETE FROM `user` WHERE `user`.`userid` = "+idd+";";
+                // remove_user
+                if (operation.equalsIgnoreCase("remove_user")) {
+                    String rmvuser = "DELETE FROM `user` WHERE `user`.`userid` = " + idd + ";";
                     int n = statement.executeUpdate(rmvuser);
-                    httpSession.setAttribute("message", "Delete USer : "+namee+ " Successfully . "   );
+                    httpSession.setAttribute("message", "Delete USer : " + namee + " Successfully . ");
                     response.sendRedirect("admin.jsp");
                     return;
                 }
                 //remove_cat
-                if(operation.equalsIgnoreCase("remove_cat")){
-                    String rmvcat= "DELETE FROM `category` WHERE `category`.`Catid` = "+idd+";";
+                if (operation.equalsIgnoreCase("remove_cat")) {
+                    String rmvcat = "DELETE FROM `category` WHERE `category`.`Catid` = " + idd + ";";
                     int n = statement.executeUpdate(rmvcat);
-                    httpSession.setAttribute("message", "Delete Category : "+namee+ " Successfully . "   );
+                    httpSession.setAttribute("message", "Delete Category : " + namee + " Successfully . ");
                     response.sendRedirect("admin.jsp");
                     return;
                 }
-                
+
                 //update category
-                if(operation.equalsIgnoreCase("update_cat")){
-                     String catdesc = request.getParameter("catdesc");
-                    String updatecat= "UPDATE `category` SET `cattitle` = '"+namee+"'"
-                                      + ", `catDes` = '"+catdesc+"' WHERE `category`.`Catid` = "+idd+";";
+                if (operation.equalsIgnoreCase("update_cat")) {
+                    String catdesc = request.getParameter("catdesc");
+                    String updatecat = "UPDATE `category` SET `cattitle` = '" + namee + "'"
+                                      + ", `catDes` = '" + catdesc + "' WHERE `category`.`Catid` = " + idd + ";";
                     int n = statement.executeUpdate(updatecat);
-                    httpSession.setAttribute("message", "Update Category : "+namee+ " Successfully . "   );
+                    httpSession.setAttribute("message", "Update Category : " + namee + " Successfully . ");
                     response.sendRedirect("admin.jsp");
                     return;
                 }
-                
+
                 //remove_product
-                if(operation.equalsIgnoreCase("romove_prod")){
-                    String rmvcat= "DELETE FROM `product` WHERE `product`.`prodid` = "+idd+";";
+                if (operation.equalsIgnoreCase("romove_prod")) {
+                    String rmvcat = "DELETE FROM `product` WHERE `product`.`prodid` = " + idd + ";";
                     int n = statement.executeUpdate(rmvcat);
-                    httpSession.setAttribute("message", "Delete Category : "+namee+ " Successfully . "   );
+                    httpSession.setAttribute("message", "Delete Category : " + namee + " Successfully . ");
                     response.sendRedirect("admin.jsp");
                     return;
                 }
                 //update product
-                if(operation.equalsIgnoreCase("update_prod")){
+                if (operation.equalsIgnoreCase("update_prod")) {
                     String pdesc = request.getParameter("pdesc");
                     String pprice = request.getParameter("pprice");
                     String pdicount = request.getParameter("pdicount");
                     String pqnt = request.getParameter("pqnt");
-                    
-                    String update= "UPDATE `product` SET `prodname` = '"+namee+"',"
-                                      + "`proddesc` = '"+pdesc+"' ,"
-                                      + "`prodprice` = '"+pprice+"' ,"
-                                      + "`proddiscount` = '"+pdicount+"' ,"
-                                      + "`prodquantity` = '"+pqnt+"' "
-                                      + " WHERE `product`.`prodid` = "+idd+";";
+
+                    String update = "UPDATE `product` SET `prodname` = '" + namee + "',"
+                                      + "`proddesc` = '" + pdesc + "' ,"
+                                      + "`prodprice` = '" + pprice + "' ,"
+                                      + "`proddiscount` = '" + pdicount + "' ,"
+                                      + "`prodquantity` = '" + pqnt + "' "
+                                      + " WHERE `product`.`prodid` = " + idd + ";";
                     int n = statement.executeUpdate(update);
-                    httpSession.setAttribute("message", "Update Product : "+namee+ " Successfully . "   );
+                    httpSession.setAttribute("message", "Update Product : " + namee + " Successfully . ");
                     response.sendRedirect("admin.jsp");
                     return;
                 }
-               // response.sendRedirect("admin.jsp");
-               // return;
+                // response.sendRedirect("admin.jsp");
+                // return;
             } catch (Exception e) {
-                out.println( "\n -getLocalizedMessage : "  +e.getLocalizedMessage());
+                out.println("\n -getLocalizedMessage : " + e.getLocalizedMessage());
             }
-            
-            
+
         }
     }
 

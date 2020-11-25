@@ -10,11 +10,11 @@
 <%@page import="java.util.ArrayList"%>
 
 <%
-        UserDao userDao =new UserDao();
-        List<User> listUsers=userDao.getAllUsers();
+        UserDao userDao1 =new UserDao();
+        List<User> listUsers1=userDao1.getAllUsers();
         
-        CategoryDao categoryDao1=new CategoryDao();
-        List<Category> catlist=categoryDao1.getAllCategory();
+        CategoryDao categoryDao2=new CategoryDao();
+        List<Category> catlist=categoryDao2.getAllCategory();
         
         ProductDao productDao1=new ProductDao();
         List<Product> prodlist = productDao1.getAllProduct();
@@ -39,7 +39,7 @@
                 </tr>
             </thead>
             <tbody>
-                <% for(User c1 : listUsers){  %>
+                <% for(User c1 : listUsers1){  %>
                 <tr>
                     <form action="ListServlet" method="post">
                          <input type="hidden" value="remove_user" name="operation"/>
