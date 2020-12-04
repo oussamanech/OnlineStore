@@ -1,6 +1,7 @@
-
 package com.servlet;
 
+import com.dao.UserDao;
+import com.entites.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -15,39 +16,26 @@ import javax.servlet.http.HttpSession;
 
 public class RegesterServlet extends HttpServlet {
 
-    
-        Connection connection = null; 
-        Statement statement = null; 
-        ResultSet resultSet = null; 
- 
-        private String url = "jdbc:mysql://localhost/store"; 
-        private String user = "root"; 
-        private String password = ""; 
-    
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet resultSet = null;
+
+    private String url = "jdbc:mysql://localhost/store";
+    private String user = "root";
+    private String password = "";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
                       throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/html;charset=UTF-8, ISO-8859-1");
         try (PrintWriter out = response.getWriter()) {
-           
+            HttpSession httpSession = request.getSession();
             try {
-                String userName = request.getParameter("user_name");
-                String userEmail = request.getParameter("user_email");
-                String userPassword = request.getParameter("user_password");
-                String userPhone = request.getParameter("user_phone");
-                String userAddress = request.getParameter("user_address"); 
-                
-                // Validation
-                
-                if (userName.isEmpty()) {
-                    out.print("Name Blank");
-                }
-                
                 // Enregistrer
 
-                        Class.forName("com.mysql.jdbc.Driver").newInstance(); 
-                        connection = DriverManager.getConnection(url, user, password);      
-                        statement = connection.createStatement(); 
-                      /*  
+                Class.forName("com.mysql.jdbc.Driver").newInstance();
+                connection = DriverManager.getConnection(url, user, password);
+                statement = connection.createStatement();
+                /*  
                         String affich_ins = "select * from inscript;" ;
                        resultSet = statement.executeQuery(affich_ins);
 
@@ -55,36 +43,60 @@ public class RegesterServlet extends HttpServlet {
                     String query= "INSERT INTO `--------` "
                             + "(`id_ins`, `nom_ins`) "
                             + " VALUES (NULL, '"+nom_in+"', '"+prenom_in+"', '"+date_in+"', '"+anne_in+"', '"+groupe_in+"', '"+adresse_in+"', '"+username_in+"', '"+motpass_in+"');";
- */
-            String query= "INSERT INTO `user` (`userid`, `username`, `useremail`, `userpassword`, `userphone`, `userpic`, `useraddress`, `type`)"
-                              + " VALUES"
-                              + " (NULL, '"+userName+"', '"+ userEmail+"', '"+userPassword +"', '"+ userPhone+"', 'default.png', '"+ userAddress+"', 'normal' );";
-            
-                   //statement =  connection.prepareStatement(query);
-                 int n = statement.executeUpdate(query);
-                 //resultSet = statement.executeQuery(query);
-                 //------------------------- search  id -------------------
-               String selectid ="SELECT * FROM `user` WHERE `userphone` LIKE "+userPhone+" and `useremail` = '"+userEmail+"';";
-               resultSet = statement.executeQuery(selectid);
-               String userIdNow="No Id";
-                if (resultSet.next()) {
-                   userIdNow= resultSet.getString("userid");
+                 */
+                String userName = request.getParameter("user_name");
+                String userEmail = request.getParameter("user_email");
+                String userPassword = request.getParameter("user_password");
+                String userPhone = request.getParameter("user_phone");
+                String userAddress = request.getParameter("user_address");
+                String op = request.getParameter("operation");
+
+                // Validation
+                if (userName.isEmpty()) {
+                    out.print("Name empty");
                 }
-              
-                HttpSession httpSession = request.getSession();
-                httpSession.setAttribute("message", "Registration Successful !! User Id : " + userIdNow  );
-                
-                response.sendRedirect("regestire.jsp");
-          
-                
+//UPDATE `user` SET `username` = 'name', `useremail` = 'imadd@gmail.com', `userpassword` = '123456', `userphone` = '7986654324', `useraddress` = 'krd 350000, russia1' WHERE `user`.`userid` = 32;
+                if (op.equalsIgnoreCase("updatuser")) {
+                    User userNow = (User) httpSession.getAttribute("currentUser");
+                    if (userNow != null) {
+                        String query = "UPDATE `user` SET `username` = '" + userName + "', `useremail` = '" + userEmail + "', "
+                                          + "`userpassword` = '" + userPassword + "', `userphone` = '" + userPhone + "', "
+                                          + "`useraddress` = '" + userAddress + "' WHERE `user`.`userid` = " + userNow.getUserId() + ";";
+
+                        int n = statement.executeUpdate(query);
+                        UserDao userDao = new UserDao();
+                        User u = userDao.getUserPyEmailAndPassword(userEmail, userPassword);
+                        httpSession.setAttribute("current-user", u.getUserType());
+                        httpSession.setAttribute("currentUser", u);
+                        httpSession.setAttribute("current-username", u.getUserName());
+
+                        httpSession.setAttribute("message", "update Successful !! User : " + userName);
+                        response.sendRedirect("regestire.jsp");
+                    }
+
+                }
+                if (op.equalsIgnoreCase("newuser")) {
+                    String query = "INSERT INTO `user` (`userid`, `username`, `useremail`, `userpassword`, `userphone`, `userpic`, `useraddress`, `type`)"
+                                      + " VALUES"
+                                      + " (NULL, '" + userName + "', '" + userEmail + "', '" + userPassword + "', '" + userPhone + "',"
+                                      + " 'default.png', '" + userAddress + "', 'normal' );";
+
+                    //statement =  connection.prepareStatement(query);
+                    int n = statement.executeUpdate(query);
+                    httpSession.setAttribute("message", "Registration Successful !! User : " + userName);
+
+                    response.sendRedirect("regestire.jsp");
+
+                }
+
                 connection.close();
             } catch (Exception e) {
-               out.println( "\n -getLocalizedMessage : "  +e.getLocalizedMessage());
-               out.println( "\n -getMessage : "  +e.getMessage());
-               out.println( "\n -toString : "  +e.toString());
-               e.printStackTrace() ;
+                out.println("\n -getLocalizedMessage : " + e.getLocalizedMessage());
+                out.println("\n -getMessage : " + e.getMessage());
+                out.println("\n -toString : " + e.toString());
+                e.printStackTrace();
             }
-            
+
         }
     }
 

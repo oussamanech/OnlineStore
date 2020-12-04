@@ -15,65 +15,62 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class LoginServlet extends HttpServlet {
- 
-        Connection connection = null; 
-        Statement statement = null; 
-        ResultSet resultSet = null; 
- 
-        private String url = "jdbc:mysql://localhost/store"; 
-        private String user = "root"; 
-        private String password = ""; 
-    
+
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet resultSet = null;
+
+    private String url = "jdbc:mysql://localhost/store";
+    private String user = "root";
+    private String password = "";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
                       throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/html;charset=UTF-8, ISO-8859-1");
         try (PrintWriter out = response.getWriter()) {
-           
-             try {
-                 
-                 Class.forName("com.mysql.jdbc.Driver").newInstance(); 
-                 connection = DriverManager.getConnection(url, user, password);      
-                 statement = connection.createStatement();
-                 
-                 // coding area
+
+            try {
+
+                Class.forName("com.mysql.jdbc.Driver").newInstance();
+                connection = DriverManager.getConnection(url, user, password);
+                statement = connection.createStatement();
+
+                // coding area
                 String e = request.getParameter("email");
                 String p = request.getParameter("password");
-                
+
                 //validation
-                
                 //authenticating user
-                 UserDao userDao =new UserDao();
-                 User u = userDao.getUserPyEmailAndPassword(e, p);
-                 HttpSession httpSession = request.getSession();
-                 
-                 if(u == null){
-                      httpSession.setAttribute("message", "Invailed Detail !! try with another one  "); 
-                      response.sendRedirect("login.jsp");
-                      return;
-                 }else{
-                     httpSession.setAttribute("current-user", u.getUserType());
-                     httpSession.setAttribute("currentUser", u);
-                     httpSession.setAttribute("current-username", u.getUserName());
-                     
-                     if(u.getUserType().equalsIgnoreCase("admin")){
-                                  response.sendRedirect("admin.jsp");
-                              }else 
-                                  if(u.getUserType().equalsIgnoreCase("normal")){
-                                  response.sendRedirect("normal.jsp");
-                              }else{
-                                  httpSession.setAttribute("message", "We have not your identified user type");
-                              }
-                     
-                 }
-                 
-                 
+                UserDao userDao = new UserDao();
+                User u = userDao.getUserPyEmailAndPassword(e, p);
+                HttpSession httpSession = request.getSession();
+
+                if (u == null) {
+                    httpSession.setAttribute("message", "Invailed Detail !! try with another one  ");
+                    response.sendRedirect("login.jsp");
+                    return;
+                } else {
+                    httpSession.setAttribute("current-user", u.getUserType());
+                    httpSession.setAttribute("currentUser", u);
+                    httpSession.setAttribute("current-username", u.getUserName());
+
+                    if (u.getUserType().equalsIgnoreCase("admin")) {
+                        response.sendRedirect("index.jsp");
+                    } else if (u.getUserType().equalsIgnoreCase("normal")) {
+                        response.sendRedirect("index.jsp");
+                    } else {
+                        httpSession.setAttribute("message", "We have not your identified user type");
+                    }
+
+                }
+
             } catch (Exception e) {
-               out.println( "\n -getLocalizedMessage : "  +e.getLocalizedMessage());
-               out.println( "\n -getMessage : "  +e.getMessage());
-               out.println( "\n -toString : "  +e.toString());
-               e.printStackTrace() ;
+                out.println("\n -getLocalizedMessage : " + e.getLocalizedMessage());
+                out.println("\n -getMessage : " + e.getMessage());
+                out.println("\n -toString : " + e.toString());
+                e.printStackTrace();
             }
-            
+
         }
     }
 

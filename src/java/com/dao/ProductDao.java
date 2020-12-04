@@ -81,5 +81,36 @@ public class ProductDao {
         }
         return p;
     }
+   
+    public Product getProductbyId(String id2) {
+
+        Product p1 = new Product();
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            connection = DriverManager.getConnection(url, user, password);
+            statement = connection.createStatement();
+
+            String query = "SELECT * FROM `product` WHERE `prodid` =" + id2 + "";
+            resultSet = statement.executeQuery(query);
+
+            if (resultSet.next()) {
+                p1.setCatId(Integer.valueOf(resultSet.getString("catid")));
+                p1.setId(Integer.valueOf(resultSet.getString("prodid")));
+                p1.setpName(resultSet.getString("prodname"));
+                p1.setpDesc(resultSet.getString("proddesc"));
+                p1.setpPrice(Integer.valueOf(resultSet.getString("prodprice")));
+                p1.setpDiscount(Integer.valueOf(resultSet.getString("proddiscount")));
+                p1.setpQuantity(Integer.valueOf(resultSet.getString("prodquantity")));
+                p1.setpPic(resultSet.getString("prodphoto"));
+                //p.add(resultSet.getString("cattitle"));
+
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ProductDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return p1;
+    }
+    
+    
 
 }
